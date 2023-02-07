@@ -9,3 +9,6 @@ Aplicação cujo propósito é visualizar arquivos de um dispostivo móvel.
 - [ ] Compartilhar arquivo
 - [ ] Salvar cópia
 - [ ] Imprimir
+
+## Importante
+- [ ] Configurar o permission_handle para o iOS, permitindo acesso à leitura de arquivos
