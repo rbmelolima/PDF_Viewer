@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pdf_viewer/features/list_files/page/list_files_page.dart';
+import 'package:pdf_viewer/features/list/page/list_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,8 +12,8 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
-    ListFilesPage(),
-    ListFilesPage(),
+    ListPage(),
+    ListPage(),
   ];
 
   void _onItemTapped(int index) {
