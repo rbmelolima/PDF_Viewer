@@ -11,7 +11,7 @@ class StoredPathsModel {
   final String path;
   final String name;
   final DateTime date;
-  final bool favorite;
+   bool favorite;
 
   factory StoredPathsModel.fromRawJson(String str) =>
       StoredPathsModel.fromJson(json.decode(str));

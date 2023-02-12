@@ -65,7 +65,12 @@ class ListRepository {
         await KeyValueAdapter.clear();
       } else if (type == TypeFile.favorite) {
         List<StoredPathsModel> files = await getFiles() ?? [];
-        files.removeWhere((element) => element.favorite);
+        files = files.map((e) {
+          if (e.favorite) {
+            e.favorite = false;
+          }
+          return e;
+        }).toList();
         KeyValueAdapter.set("files", jsonEncode(files));
       } else {
         List<StoredPathsModel> files = await getFiles() ?? [];
