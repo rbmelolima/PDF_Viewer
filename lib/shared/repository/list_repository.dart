@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:pdf_viewer/shared/model/stored_paths_model.dart';
 import 'package:pdf_viewer/shared/packages/storage/key_value_adapter.dart';
 
+enum TypeFile { recent, favorite, all }
+
 class ListRepository {
-  Future<List<StoredPathsModel>?> getRecentFiles() async {
+  Future<List<StoredPathsModel>?> getFiles() async {
     List<StoredPathsModel> files = [];
 
     try {
-      final jsonRecentFiles = await KeyValueAdapter.get("recent");
+      final jsonRecentFiles = await KeyValueAdapter.get("files");
 
       if (jsonRecentFiles != null) {
         var decodedJsonFiles = jsonDecode(jsonRecentFiles);
@@ -24,9 +26,9 @@ class ListRepository {
     }
   }
 
-  Future<void> addRecentFile(String path) async {
+  Future<void> addFile(String path, {bool isFavorite = false}) async {
     try {
-      List<StoredPathsModel> files = await getRecentFiles() ?? [];
+      List<StoredPathsModel> files = await getFiles() ?? [];
       int index = 0;
       bool exists = false;
 
@@ -38,34 +40,46 @@ class ListRepository {
         }
       }
 
-      if (exists) files.removeAt(index);
+      if (exists) {
+        files.removeAt(index);
+      }
 
       files.add(
         StoredPathsModel(
           path: path,
           name: path.split("/").last,
           date: DateTime.now(),
-          favorite: false,
+          favorite: isFavorite,
         ),
       );
 
-      KeyValueAdapter.set("recent", jsonEncode(files));
+      KeyValueAdapter.set("files", jsonEncode(files));
     } catch (e) {
       throw "Error while adding recent file";
     }
   }
 
-  Future<void> clearRecentFiles() async {
+  Future<void> clearFiles(TypeFile type) async {
     try {
-      KeyValueAdapter.set("recent", jsonEncode([]));
+      if (type == TypeFile.all) {
+        await KeyValueAdapter.clear();
+      } else if (type == TypeFile.favorite) {
+        List<StoredPathsModel> files = await getFiles() ?? [];
+        files.removeWhere((element) => element.favorite);
+        KeyValueAdapter.set("files", jsonEncode(files));
+      } else {
+        List<StoredPathsModel> files = await getFiles() ?? [];
+        files.removeWhere((element) => !element.favorite);
+        KeyValueAdapter.set("files", jsonEncode(files));
+      }
     } catch (e) {
       throw "Error while clearing recent files";
     }
   }
 
-  Future<void> removeRecentFile(String path) async {
+  Future<void> removeFile(String path) async {
     try {
-      List<StoredPathsModel> files = await getRecentFiles() ?? [];
+      List<StoredPathsModel> files = await getFiles() ?? [];
       int index = 0;
       bool exists = false;
 
@@ -79,7 +93,7 @@ class ListRepository {
 
       if (exists) files.removeAt(index);
 
-      KeyValueAdapter.set("recent", jsonEncode(files));
+      KeyValueAdapter.set("files", jsonEncode(files));
     } catch (e) {
       throw "Error while removing recent file";
     }

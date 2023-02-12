@@ -7,10 +7,12 @@ import 'package:pdf_viewer/shared/repository/list_repository.dart';
 
 class PdfViewerPage extends StatefulWidget {
   final File pdfFile;
+  final bool initIsFavorite;
 
   const PdfViewerPage({
     Key? key,
     required this.pdfFile,
+    required this.initIsFavorite,
   }) : super(key: key);
 
   @override
@@ -18,19 +20,21 @@ class PdfViewerPage extends StatefulWidget {
 }
 
 class _PdfViewerPageState extends State<PdfViewerPage> {
-  bool isFavorite = false;
   ShareAdapter shareAdapter = ShareAdapter();
+  ListRepository listRepository = ListRepository();
+
   late PDFViewerAdapter pdfViewerAdapter;
+  late bool isFavorite;
 
   @override
   void initState() {
     pdfViewerAdapter = PDFViewerAdapter(widget.pdfFile);
+    isFavorite = widget.initIsFavorite;
     super.initState();
   }
 
   void onDocumentError() async {
     try {
-      ListRepository listRepository = ListRepository();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Erro ao abrir o arquivo'),
@@ -38,7 +42,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
         ),
       );
 
-      await listRepository.removeRecentFile(widget.pdfFile.path);
+      await listRepository.removeFile(widget.pdfFile.path);
     } catch (_) {}
   }
 
@@ -59,10 +63,15 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
               Icons.favorite,
               color: isFavorite ? Colors.red : Colors.grey[400],
             ),
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 isFavorite = !isFavorite;
               });
+
+              await listRepository.addFile(
+                widget.pdfFile.path,
+                isFavorite: isFavorite,
+              );
             },
           )
         ],

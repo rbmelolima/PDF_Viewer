@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () async {
           await onPickFile(context, mounted);
         },
-        child: const Icon(Icons.search),
+        child: const Icon(Icons.file_open),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -70,14 +70,17 @@ class _HomePageState extends State<HomePage> {
       File? file = await filePicker.pickFile();
 
       if (file != null) {
-        await listRepository.addRecentFile(file.path);
+        await listRepository.addFile(file.path);
 
         if (!mounted) return;
 
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PdfViewerPage(pdfFile: file),
+            builder: (context) => PdfViewerPage(
+              pdfFile: file,
+              initIsFavorite: false,
+            ),
           ),
         );
 

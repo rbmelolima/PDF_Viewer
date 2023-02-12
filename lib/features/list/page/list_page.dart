@@ -50,17 +50,29 @@ class _ListPageState extends State<ListPage> {
         ),
         body: TabBarView(
           children: [
-            buildRecentFiles(),
-            const Center(child: Text('Todos')),
+            buildListFiles(TypeFile.recent),
+            buildListFiles(TypeFile.favorite),
           ],
         ),
       ),
     );
   }
 
-  Widget buildRecentFiles() {
+  Widget buildListFiles(TypeFile typeFile) {
+    late Icon icon;
+
+    switch (typeFile) {
+      case TypeFile.recent:
+      case TypeFile.all:
+        icon = const Icon(Icons.picture_as_pdf);
+        break;
+      case TypeFile.favorite:
+        icon = const Icon(Icons.favorite);
+        break;
+    }
+
     return FutureBuilder<List<StoredPathsModel>?>(
-      future: listRepository.getRecentFiles(),
+      future: listRepository.getFiles(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -68,9 +80,20 @@ class _ListPageState extends State<ListPage> {
           );
         }
 
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text("Nenhum arquivo recente"),
+          );
+        } else if (snapshot.hasData) {
+          List<StoredPathsModel> files = snapshot.data!;
+
+          if (typeFile == TypeFile.favorite) {
+            files.removeWhere((element) => !element.favorite);
+            log(files.length.toString());
+          }
+
           return ListView.builder(
-            itemCount: snapshot.data?.length,
+            itemCount: files.length,
             itemBuilder: (context, index) {
               return ListTile(
                 title: Text(
@@ -81,15 +104,13 @@ class _ListPageState extends State<ListPage> {
                   "Aberto em ${snapshot.data![index].date.formattedDateTime}",
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
-                leading: const Icon(Icons.picture_as_pdf),
-                onTap: () async =>
-                    await onNavigation(snapshot.data![index].path),
+                leading: icon,
+                onTap: () async => await onNavigation(
+                  snapshot.data![index].path,
+                  snapshot.data![index].favorite,
+                ),
               );
             },
-          );
-        } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text("Nenhum arquivo recente"),
           );
         } else if (snapshot.hasError) {
           return const Center(
@@ -103,9 +124,9 @@ class _ListPageState extends State<ListPage> {
     );
   }
 
-  Future<void> onNavigation(String path) async {
+  Future<void> onNavigation(String path, bool isFavorite) async {
     try {
-      await listRepository.addRecentFile(path);
+      await listRepository.addFile(path);
 
       if (!mounted) return;
 
@@ -114,6 +135,7 @@ class _ListPageState extends State<ListPage> {
         MaterialPageRoute(
           builder: (context) => PdfViewerPage(
             pdfFile: File(path),
+            initIsFavorite: isFavorite,
           ),
         ),
       );

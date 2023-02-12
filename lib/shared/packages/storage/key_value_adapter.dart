@@ -9,11 +9,6 @@ class KeyValueAdapter {
     bool rewrite = true,
   }) async {
     await storage.ready;
-
-    if (rewrite) {
-      await storage.deleteItem(key);
-    }
-
     await storage.setItem(key, value);
   }
 
