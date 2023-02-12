@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:pdf_viewer/features/list/page/list_page.dart';
-import 'package:pdf_viewer/features/pdf_viewer/page/pdf_viewer_page.dart';
 import 'package:pdf_viewer/features/settings/page/settings_page.dart';
-import 'package:pdf_viewer/shared/packages/file/file_picker_adapter.dart';
 import 'package:pdf_viewer/shared/repository/list_repository.dart';
 
 class HomePage extends StatefulWidget {
@@ -53,9 +49,6 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-     
     );
   }
-
-  
 }
