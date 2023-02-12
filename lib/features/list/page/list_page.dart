@@ -2,9 +2,11 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pdf_viewer/features/pdf_viewer/page/pdf_viewer_page.dart';
 import 'package:pdf_viewer/shared/model/stored_paths_model.dart';
 import 'package:pdf_viewer/shared/repository/list_repository.dart';
+import 'package:pdf_viewer/shared/utils/assets_handler.dart';
 import 'package:pdf_viewer/shared/utils/date_extension.dart';
 
 class ListPage extends StatefulWidget {
@@ -71,6 +73,14 @@ class _ListPageState extends State<ListPage> {
         break;
     }
 
+    String helperTxt = typeFile == TypeFile.recent
+        ? "Você ainda não abriu nenhum arquivo"
+        : "Você ainda não favoritou nenhum arquivo";
+
+    String errorTxt = typeFile == TypeFile.recent
+        ? "Erro ao carregar os arquivos recentes"
+        : "Erro ao carregar os arquivos favoritos";
+
     return FutureBuilder<List<StoredPathsModel>?>(
       future: listRepository.getFiles(),
       builder: (context, snapshot) {
@@ -81,9 +91,7 @@ class _ListPageState extends State<ListPage> {
         }
 
         if (snapshot.hasData && snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text("Nenhum arquivo recente"),
-          );
+          return emptyDataWidget(helperTxt, context);
         } else if (snapshot.hasData) {
           List<StoredPathsModel> files = snapshot.data!;
 
@@ -113,14 +121,58 @@ class _ListPageState extends State<ListPage> {
             },
           );
         } else if (snapshot.hasError) {
-          return const Center(
-            child: Text("Erro ao carregar arquivos recentes"),
-          );
+          return errorDataWidget(errorTxt, context);
         }
-        return const Center(
-          child: Text("Erro ao carregar arquivos recentes"),
-        );
+        return errorDataWidget(errorTxt, context);
       },
+    );
+  }
+
+  Widget emptyDataWidget(String helperTxt, BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: SvgPicture.asset(
+              AssetsPathHandler.emptyData,
+              height: 200,
+            ),
+          ),
+          Text(
+            helperTxt,
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget errorDataWidget(String errorTxt, BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: SvgPicture.asset(
+              AssetsPathHandler.error,
+              height: 200,
+            ),
+          ),
+          Text(
+            errorTxt,
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 
