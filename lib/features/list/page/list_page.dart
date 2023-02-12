@@ -76,7 +76,7 @@ class _ListPageState extends State<ListPage> {
         icon = const Icon(Icons.picture_as_pdf);
         break;
       case TypeFile.favorite:
-        icon = const Icon(Icons.favorite);
+        icon = const Icon(Icons.favorite, color: Colors.red);
         break;
     }
 
