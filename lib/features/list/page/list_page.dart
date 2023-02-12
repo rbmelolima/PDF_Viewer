@@ -97,8 +97,9 @@ class _ListPageState extends State<ListPage> {
 
           if (typeFile == TypeFile.favorite) {
             files.removeWhere((element) => !element.favorite);
-            log(files.length.toString());
           }
+
+          if (files.isEmpty) return emptyDataWidget(helperTxt, context);
 
           return ListView.builder(
             itemCount: files.length,
