@@ -36,6 +36,13 @@ class MyApp extends StatelessWidget {
           unselectedLabelColor: Colors.grey,
           indicatorSize: TabBarIndicatorSize.label,
         ),
+        popupMenuTheme: const PopupMenuThemeData(
+          textStyle: TextStyle(
+            color: Colors.black87,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
         fontFamily: 'Lato',
         textTheme: const TextTheme(
           bodyLarge: TextStyle(
