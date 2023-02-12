@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf_viewer/features/all_files/page/all_files_page.dart';
 import 'package:pdf_viewer/features/list/page/list_page.dart';
 import 'package:pdf_viewer/features/pdf_viewer/page/pdf_viewer_page.dart';
 import 'package:pdf_viewer/shared/packages/file/file_picker_adapter.dart';
+import 'package:pdf_viewer/shared/repository/list_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  late ListRepository listRepository;
 
   static const List<Widget> _widgetOptions = <Widget>[
     ListPage(),
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    listRepository = ListRepository();
     super.initState();
   }
 
@@ -55,7 +57,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () async {
           await onPickFile(context, mounted);
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.search),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -68,6 +70,9 @@ class _HomePageState extends State<HomePage> {
       File? file = await filePicker.pickFile();
 
       if (file != null) {
+        await listRepository.addRecentFile(file.path);
+        setState(() {});
+
         if (!mounted) return;
 
         Navigator.push(

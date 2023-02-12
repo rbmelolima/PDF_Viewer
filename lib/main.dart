@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_viewer/features/home/page/home_page.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
