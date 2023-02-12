@@ -46,18 +46,29 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
     } catch (_) {}
   }
 
+  List<PopupMenuItem> buildPopupMenuItems() {
+    return [
+      PopupMenuItem(
+        child: Row(children: [
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            child: const Icon(Icons.share),
+          ),
+          const Text('Compartilhar'),
+        ]),
+        onTap: () async {
+          await shareAdapter.shareFile(widget.pdfFile.path);
+        },
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.pdfFile.path.split('/').last.toString()),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () async {
-              await shareAdapter.shareFile(widget.pdfFile.path);
-            },
-          ),
           IconButton(
             icon: Icon(
               Icons.favorite,
@@ -73,7 +84,13 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                 isFavorite: isFavorite,
               );
             },
-          )
+          ),
+          PopupMenuButton(
+            padding: const EdgeInsets.all(0),
+            itemBuilder: (context) {
+              return buildPopupMenuItems();
+            },
+          ),
         ],
       ),
       body: pdfViewerAdapter.view(onDocumentError),

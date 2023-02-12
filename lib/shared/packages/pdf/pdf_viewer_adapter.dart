@@ -16,6 +16,7 @@ class PDFViewerAdapter {
         log("Erro ao abrir o PDF");
         onDocumentError();
       },
+      
     );
   }
 }
