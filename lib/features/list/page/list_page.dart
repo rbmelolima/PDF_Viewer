@@ -126,7 +126,7 @@ class _ListPageState extends State<ListPage> {
 
   Future<void> onNavigation(String path, bool isFavorite) async {
     try {
-      await listRepository.addFile(path);
+      await listRepository.addFile(path, isFavorite: isFavorite);
 
       if (!mounted) return;
 
