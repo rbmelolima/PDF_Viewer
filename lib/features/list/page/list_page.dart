@@ -11,7 +11,7 @@ class ListPage extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             'Olá, bom te ver!',
-            style: Theme.of(context).textTheme.headline2,
+            style: Theme.of(context).textTheme.displayMedium,
           ),
           bottom: const PreferredSize(
             preferredSize: Size.fromHeight(48),
