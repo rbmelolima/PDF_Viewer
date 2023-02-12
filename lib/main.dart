@@ -18,7 +18,6 @@ class MyApp extends StatelessWidget {
           secondary: Color(0xFF1098F7),
           error: Color(0xffff0033),
         ),
-        backgroundColor: Color(0xFFFAFAFA),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Color(0xFF1098F7),
           foregroundColor: Colors.white,
@@ -39,37 +38,37 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'Lato',
         textTheme: const TextTheme(
-          bodyText1: TextStyle(
+          bodyLarge: TextStyle(
             color: Colors.black87,
             fontSize: 16,
             fontWeight: FontWeight.w400,
           ),
-          bodyText2: TextStyle(
+          bodyMedium: TextStyle(
             color: Colors.black87,
             fontSize: 14,
             fontWeight: FontWeight.w400,
           ),
-          headline1: TextStyle(
+          displayLarge: TextStyle(
             color: Colors.black87,
             fontSize: 32,
             fontWeight: FontWeight.bold,
           ),
-          headline2: TextStyle(
+          displayMedium: TextStyle(
             color: Colors.black87,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
-          headline3: TextStyle(
+          displaySmall: TextStyle(
             color: Colors.black87,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
-          headline4: TextStyle(
+          headlineMedium: TextStyle(
             color: Colors.black87,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
-          headline5: TextStyle(
+          headlineSmall: TextStyle(
             color: Colors.black87,
             fontSize: 12,
             fontWeight: FontWeight.bold,
