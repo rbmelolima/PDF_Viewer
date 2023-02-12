@@ -17,11 +17,13 @@ class KeyValueAdapter {
     await storage.setItem(key, value);
   }
 
-  static dynamic get(String key) {
+  static Future<dynamic> get(String key) async {
+    await storage.ready;
     return storage.getItem(key);
   }
 
   static Future<void> remove(String key) async {
+    await storage.ready;
     await storage.deleteItem(key);
   }
 

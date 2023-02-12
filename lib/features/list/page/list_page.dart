@@ -69,7 +69,6 @@ class _ListPageState extends State<ListPage> {
         }
 
         if (snapshot.hasData) {
-          log(snapshot.data.toString());
           return ListView.builder(
             itemCount: snapshot.data?.length,
             itemBuilder: (context, index) {
@@ -80,42 +79,46 @@ class _ListPageState extends State<ListPage> {
                 ),
                 subtitle: Text(
                   "Aberto em ${snapshot.data![index].date.formattedDateTime}",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 leading: const Icon(Icons.picture_as_pdf),
-                onTap: () {
-                  if (!mounted) return;
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PdfViewerPage(
-                        pdfFile: File(
-                          snapshot.data![index].path,
-                        ),
-                      ),
-                    ),
-                  );
-                },
+                onTap: () async =>
+                    await onNavigation(snapshot.data![index].path),
               );
             },
           );
         } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-          log("Nenhum arquivo recente");
           return const Center(
             child: Text("Nenhum arquivo recente"),
           );
         } else if (snapshot.hasError) {
-          log("Erro ao carregar arquivos recentes");
           return const Center(
             child: Text("Erro ao carregar arquivos recentes"),
           );
         }
-
         return const Center(
           child: Text("Erro ao carregar arquivos recentes"),
         );
       },
     );
+  }
+
+  Future<void> onNavigation(String path) async {
+    try {
+      await listRepository.addRecentFile(path);
+
+      if (!mounted) return;
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PdfViewerPage(
+            pdfFile: File(path),
+          ),
+        ),
+      );
+
+      setState(() {});
+    } catch (_) {}
   }
 }

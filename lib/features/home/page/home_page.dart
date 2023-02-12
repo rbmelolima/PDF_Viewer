@@ -71,16 +71,17 @@ class _HomePageState extends State<HomePage> {
 
       if (file != null) {
         await listRepository.addRecentFile(file.path);
-        setState(() {});
 
         if (!mounted) return;
 
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PdfViewerPage(pdfFile: file),
           ),
         );
+
+        setState(() {});
       }
     } catch (e) {
       showDialog(

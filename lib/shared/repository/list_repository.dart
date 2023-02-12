@@ -8,7 +8,7 @@ class ListRepository {
     List<StoredPathsModel> files = [];
 
     try {
-      final jsonRecentFiles = KeyValueAdapter.get("recent");
+      final jsonRecentFiles = await KeyValueAdapter.get("recent");
 
       if (jsonRecentFiles != null) {
         var decodedJsonFiles = jsonDecode(jsonRecentFiles);
@@ -27,6 +27,18 @@ class ListRepository {
   Future<void> addRecentFile(String path) async {
     try {
       List<StoredPathsModel> files = await getRecentFiles() ?? [];
+      int index = 0;
+      bool exists = false;
+
+      for (int i = 0; i < files.length; i++) {
+        if (files[i].path == path) {
+          index = i;
+          exists = true;
+          break;
+        }
+      }
+
+      if (exists) files.removeAt(index);
 
       files.add(
         StoredPathsModel(
@@ -48,6 +60,28 @@ class ListRepository {
       KeyValueAdapter.set("recent", jsonEncode([]));
     } catch (e) {
       throw "Error while clearing recent files";
+    }
+  }
+
+  Future<void> removeRecentFile(String path) async {
+    try {
+      List<StoredPathsModel> files = await getRecentFiles() ?? [];
+      int index = 0;
+      bool exists = false;
+
+      for (int i = 0; i < files.length; i++) {
+        if (files[i].path == path) {
+          index = i;
+          exists = true;
+          break;
+        }
+      }
+
+      if (exists) files.removeAt(index);
+
+      KeyValueAdapter.set("recent", jsonEncode(files));
+    } catch (e) {
+      throw "Error while removing recent file";
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,7 +9,13 @@ class PDFViewerAdapter {
 
   PDFViewerAdapter(this.pdfFile);
 
-  Widget view() {
-    return SfPdfViewer.file(pdfFile);
+  Widget view(Function onDocumentError) {
+    return SfPdfViewer.file(
+      pdfFile,
+      onDocumentLoadFailed: (_) {
+        log("Erro ao abrir o PDF");
+        onDocumentError();
+      },
+    );
   }
 }

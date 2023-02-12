@@ -73,6 +73,10 @@ class MyApp extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.bold,
           ),
+          labelSmall: TextStyle(
+            color: Color.fromARGB(255, 197, 197, 197),
+            fontSize: 12,
+          ),
         ),
       ),
       home: const HomePage(),
