@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:pdf_viewer/shared/model/stored_paths_model.dart';
@@ -41,6 +40,14 @@ class ListRepository {
       KeyValueAdapter.set("recent", jsonEncode(files));
     } catch (e) {
       throw "Error while adding recent file";
+    }
+  }
+
+  Future<void> clearRecentFiles() async {
+    try {
+      KeyValueAdapter.set("recent", jsonEncode([]));
+    } catch (e) {
+      throw "Error while clearing recent files";
     }
   }
 }

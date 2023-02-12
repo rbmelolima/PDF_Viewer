@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:pdf_viewer/features/all_files/page/all_files_page.dart';
 import 'package:pdf_viewer/features/list/page/list_page.dart';
 import 'package:pdf_viewer/features/pdf_viewer/page/pdf_viewer_page.dart';
+import 'package:pdf_viewer/features/settings/page/settings_page.dart';
 import 'package:pdf_viewer/shared/packages/file/file_picker_adapter.dart';
 import 'package:pdf_viewer/shared/repository/list_repository.dart';
 
@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     ListPage(),
-    AllFilesPage(),
+    SettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -46,8 +46,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.file_open),
-            label: 'Arquivos',
+            icon: Icon(Icons.settings),
+            label: 'Configurações',
           ),
         ],
         currentIndex: _selectedIndex,
