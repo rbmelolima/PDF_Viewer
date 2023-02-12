@@ -1,10 +1,10 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pdf_viewer/features/pdf_viewer/page/pdf_viewer_page.dart';
 import 'package:pdf_viewer/shared/model/stored_paths_model.dart';
+import 'package:pdf_viewer/shared/packages/file/file_picker_adapter.dart';
 import 'package:pdf_viewer/shared/repository/list_repository.dart';
 import 'package:pdf_viewer/shared/utils/assets_handler.dart';
 import 'package:pdf_viewer/shared/utils/date_extension.dart';
@@ -56,6 +56,13 @@ class _ListPageState extends State<ListPage> {
             buildListFiles(TypeFile.favorite),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await onPickFile(context, mounted);
+          },
+          child: const Icon(Icons.file_open),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }
@@ -102,6 +109,7 @@ class _ListPageState extends State<ListPage> {
           if (files.isEmpty) return emptyDataWidget(helperTxt, context);
 
           return ListView.builder(
+            padding: const EdgeInsets.only(bottom: 80),
             itemCount: files.length,
             itemBuilder: (context, index) {
               return ListTile(
@@ -195,5 +203,52 @@ class _ListPageState extends State<ListPage> {
 
       setState(() {});
     } catch (_) {}
+  }
+
+  Future<void> onPickFile(BuildContext context, [bool mounted = true]) async {
+    FilePickerAdapter filePicker = FilePickerAdapter();
+
+    try {
+      File? file = await filePicker.pickFile();
+
+      if (file != null) {
+        await listRepository.addFile(file.path);
+
+        if (!mounted) return;
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfViewerPage(
+              pdfFile: file,
+              initIsFavorite: false,
+            ),
+          ),
+        );
+
+        setState(() {});
+      }
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              'Falha o selecionar o arquivo',
+              style: Theme.of(context).textTheme.displaySmall,
+            ),
+            content: const Text("Tente novamente mais tarde"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Tudo bem!'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

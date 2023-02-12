@@ -53,60 +53,9 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await onPickFile(context, mounted);
-        },
-        child: const Icon(Icons.file_open),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+     
     );
   }
 
-  Future<void> onPickFile(BuildContext context, [bool mounted = true]) async {
-    FilePickerAdapter filePicker = FilePickerAdapter();
-
-    try {
-      File? file = await filePicker.pickFile();
-
-      if (file != null) {
-        await listRepository.addFile(file.path);
-
-        if (!mounted) return;
-
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PdfViewerPage(
-              pdfFile: file,
-              initIsFavorite: false,
-            ),
-          ),
-        );
-
-        setState(() {});
-      }
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-              'Falha o selecionar o arquivo',
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
-            content: const Text("Tente novamente mais tarde"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Tudo bem!'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
+  
 }
