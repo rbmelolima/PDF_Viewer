@@ -1,12 +1,10 @@
 package com.rbmelolima.pdf_viewer
 
+import android.os.Environment
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-
-import android.os.Environment
-import android.util.Log
-import android.provider.MediaStore.Files
+import java.io.File
 
 class MainActivity: FlutterActivity() {
     private val channel = "native.flutter/directory"
@@ -29,6 +27,22 @@ class MainActivity: FlutterActivity() {
         }
     }
 
+    private fun getSDCardRoot() : String? {
+        val appsDir: Array<File> = context.getExternalFilesDirs(null)
+        val extRootPaths: ArrayList<String> = ArrayList()
+        for (file: File in appsDir)
+            extRootPaths.add(file.absolutePath)
+
+        if(extRootPaths.size > 1) {
+           val sdCardPath = extRootPaths[1]
+           val splittedPath = sdCardPath.split("/")
+            return  "/" + splittedPath[1] + "/" + splittedPath[2]
+        }
+
+        return null
+    }
+
+    /// Search all device root directories
     private fun getRootPaths(): List<String> {
         val listOfPaths: MutableList<String> = mutableListOf()
         val root = Environment.getExternalStorageDirectory()
@@ -44,13 +58,23 @@ class MainActivity: FlutterActivity() {
     }
 
     private fun getAllFiles(typeFile: String): List<String> {
-        val listOfPaths: MutableList<String> = mutableListOf()
-        
-        val root = Environment.getExternalStorageDirectory()
+        val sdCardRootPath: String? = getSDCardRoot()
+        val deviceRootPath = Environment.getExternalStorageDirectory()
 
-        root.walk().forEach {
+        val listOfPaths: MutableList<String> = mutableListOf()
+
+        deviceRootPath.walk().forEach {
             if(it.isFile && it.extension == typeFile) {
                 listOfPaths.add(it.absolutePath)
+            }
+        }
+
+        if(sdCardRootPath != null) {
+            val sdCard = File(sdCardRootPath)
+            sdCard.walk().forEach {
+                if(it.isFile && it.extension == typeFile) {
+                    listOfPaths.add(it.absolutePath)
+                }
             }
         }
 

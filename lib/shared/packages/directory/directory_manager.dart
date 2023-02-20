@@ -6,20 +6,20 @@ class DirectoryManager {
   static const _methodChannelName = 'native.flutter/directory';
   static const _plataform = MethodChannel(_methodChannelName);
 
-  /// Get the root paths of the device
-  Future<List<String>> getRootPaths() async {
+  /// Busca todas as pastas raiz da memória interna do dispositivo
+  Future<List<String>?> getRootPaths() async {
     try {
       final List<dynamic> path = await _plataform.invokeMethod('getRootPaths');
 
       return path.map((e) => e.toString()).toList();
     } catch (e) {
       log("Falha no methodChannel: $_methodChannelName", error: e);
-      rethrow;
+      return null;
     }
   }
 
-  /// Get all files from device
-  Future<List<String>> getAllFiles(String typeFile) async {
+  /// Busca todos os arquivos de um determinado tipo no armazenamento interno/externo do dispositivo
+  Future<List<String>?> getAllFiles(String typeFile) async {
     try {
       final List<dynamic> path = await _plataform.invokeMethod(
         'getAllFiles',
@@ -29,7 +29,7 @@ class DirectoryManager {
       return path.map((e) => e.toString()).toList();
     } catch (e) {
       log("Falha no methodChannel: $_methodChannelName", error: e);
-      rethrow;
+      return null;
     }
   }
 }

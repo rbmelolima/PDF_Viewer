@@ -141,7 +141,7 @@ class _ListPageState extends State<ListPage> {
   }
 
   Widget buildListFilesOwnDevice() {
-    return FutureBuilder<List<String>>(
+    return FutureBuilder<List<String>?>(
       future: directoryManager.getAllFiles("pdf"),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -154,9 +154,9 @@ class _ListPageState extends State<ListPage> {
           return emptyDataWidget(
               "Não foi possível listar os arquivos", context);
         } else if (snapshot.hasData) {
-          List<String> files = snapshot.data!;
+          List<String>? paths = snapshot.data;
 
-          if (files.isEmpty) {
+          if (paths == null || paths.isEmpty) {
             return emptyDataWidget(
               "Não foi possível listar os arquivos",
               context,
@@ -165,12 +165,11 @@ class _ListPageState extends State<ListPage> {
 
           return ListView.builder(
             padding: const EdgeInsets.only(bottom: 80),
-            itemCount: files.length,
+            itemCount: paths.length,
             itemBuilder: (context, index) {
               return ListTile(
                 title: Text(
-                  snapshot.data?[index].split("/").last ??
-                      "Caminho não encontrado",
+                  snapshot.data![index].split("/").last,
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 leading: const Icon(Icons.picture_as_pdf),
