@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pdf_viewer/features/pdf_viewer/page/pdf_viewer_page.dart';
 import 'package:pdf_viewer/shared/model/stored_paths_model.dart';
+import 'package:pdf_viewer/shared/packages/directory/directory_manager.dart';
 import 'package:pdf_viewer/shared/packages/file/file_picker_adapter.dart';
 import 'package:pdf_viewer/shared/repository/list_repository.dart';
 import 'package:pdf_viewer/shared/utils/assets_handler.dart';
@@ -17,18 +18,18 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
-  late ListRepository listRepository;
+  ListRepository listRepository = ListRepository();
+  DirectoryManager directoryManager = DirectoryManager();
 
   @override
   void initState() {
-    listRepository = ListRepository();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -45,6 +46,7 @@ class _ListPageState extends State<ListPage> {
                 tabs: [
                   Tab(text: 'Recentes'),
                   Tab(text: 'Favoritos'),
+                  Tab(text: 'Neste dispositivo'),
                 ],
               ),
             ),
@@ -54,6 +56,7 @@ class _ListPageState extends State<ListPage> {
           children: [
             buildListFiles(TypeFile.recent),
             buildListFiles(TypeFile.favorite),
+            buildListFilesOwnDevice(),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -133,6 +136,55 @@ class _ListPageState extends State<ListPage> {
           return errorDataWidget(errorTxt, context);
         }
         return errorDataWidget(errorTxt, context);
+      },
+    );
+  }
+
+  Widget buildListFilesOwnDevice() {
+    return FutureBuilder<List<String>>(
+      future: directoryManager.getAllFiles("pdf"),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (snapshot.hasData && snapshot.data!.isEmpty) {
+          return emptyDataWidget(
+              "Não foi possível listar os arquivos", context);
+        } else if (snapshot.hasData) {
+          List<String> files = snapshot.data!;
+
+          if (files.isEmpty) {
+            return emptyDataWidget(
+              "Não foi possível listar os arquivos",
+              context,
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.only(bottom: 80),
+            itemCount: files.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(
+                  snapshot.data?[index].split("/").last ??
+                      "Caminho não encontrado",
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                leading: const Icon(Icons.picture_as_pdf),
+                onTap: () async => await onNavigation(
+                  snapshot.data![index],
+                  false,
+                ),
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return errorDataWidget("Falha ao buscar os arquivos", context);
+        }
+        return errorDataWidget("Falha ao buscar os arquivos", context);
       },
     );
   }

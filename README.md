@@ -2,13 +2,17 @@
 Aplicação cujo propósito é visualizar arquivos de um dispostivo móvel.
 
 ## Funcionalidades
-- [ ] Ver arquivos recentes
+- [x] Ver arquivos recentes
 - [ ] Ver todos arquivos do dispositivo
-- [ ] Pesquisar arquivos do dispositivo
-- [ ] Favoritar arquivo
-- [ ] Compartilhar arquivo
+- [x] Pesquisar arquivos do dispositivo
+- [x] Favoritar arquivo
+- [x] Compartilhar arquivo
 - [ ] Salvar cópia
-- [ ] Imprimir
+- [x] Imprimir
 
 ## Importante
 - [ ] Configurar o permission_handle para o iOS, permitindo acesso à leitura de arquivos
+- [ ] Implementar o "ver todos os arquivos" para o iOS
+
+## O que aprendi?
+https://medium.com/@sendtosaeed2/android-fetch-all-files-from-local-storage-media-store-api-e9b914cd71e1

@@ -19,6 +19,9 @@ class MainActivity: FlutterActivity() {
                 "getRootPaths" -> {
                     result.success(getRootPaths())
                 }
+                "getAllFiles" -> {
+                    result.success(getAllFiles(call.arguments as String))
+                }
                 else -> {
                     result.notImplemented()
                 }
@@ -28,15 +31,26 @@ class MainActivity: FlutterActivity() {
 
     private fun getRootPaths(): List<String> {
         val listOfPaths: MutableList<String> = mutableListOf()
+        val root = Environment.getExternalStorageDirectory()
+        val listOfFiles = root.listFiles()
 
-        Log.v("native", Environment.getExternalStorageDirectory().absolutePath)
+        if(listOfFiles != null) {
+            for(file in listOfFiles) {
+                listOfPaths.add(file.absolutePath)
+            }
+        }
+
+        return listOfPaths
+    }
+
+    private fun getAllFiles(typeFile: String): List<String> {
+        val listOfPaths: MutableList<String> = mutableListOf()
+        
         val root = Environment.getExternalStorageDirectory()
 
-        val list = root.list()
-
-        if(list != null) {
-            for (path in list) {
-                listOfPaths.add("${root.absolutePath}/$path")
+        root.walk().forEach {
+            if(it.isFile && it.extension == typeFile) {
+                listOfPaths.add(it.absolutePath)
             }
         }
 
