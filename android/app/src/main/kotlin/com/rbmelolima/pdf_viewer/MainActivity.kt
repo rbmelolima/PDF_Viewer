@@ -20,6 +20,9 @@ class MainActivity: FlutterActivity() {
                 "getAllFiles" -> {
                     result.success(getAllFiles(call.arguments as String))
                 }
+                "getAllFilesExtended" -> {
+                    result.success(getAllFilesExtended(call.arguments as String))
+                }
                 else -> {
                     result.notImplemented()
                 }
@@ -74,6 +77,44 @@ class MainActivity: FlutterActivity() {
             sdCard.walk().forEach {
                 if(it.isFile && it.extension == typeFile) {
                     listOfPaths.add(it.absolutePath)
+                }
+            }
+        }
+
+        return listOfPaths
+    }
+
+    private fun getAllFilesExtended(typeFile: String): List<HashMap<String, String>> {
+        val sdCardRootPath: String? = getSDCardRoot()
+        val deviceRootPath = Environment.getExternalStorageDirectory()
+
+        val listOfPaths: MutableList<HashMap<String, String>> = mutableListOf()
+
+        deviceRootPath.walk().forEach {
+            if(it.isFile && it.extension == typeFile) {
+                listOfPaths.add(
+                    hashMapOf(
+                        "name" to it.name,
+                        "path" to it.absolutePath,
+                        "lastModified" to it.lastModified().toString(),
+                        "size" to it.length().toString()
+                    )
+                )
+            }
+        }
+
+        if(sdCardRootPath != null) {
+            val sdCard = File(sdCardRootPath)
+            sdCard.walk().forEach {
+                if(it.isFile && it.extension == typeFile) {
+                    listOfPaths.add(
+                        hashMapOf(
+                            "name" to it.name,
+                            "path" to it.absolutePath,
+                            "lastModified" to it.lastModified().toString(),
+                            "size" to it.length().toString()
+                        )
+                    )
                 }
             }
         }

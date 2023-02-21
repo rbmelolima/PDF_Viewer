@@ -1,14 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pdf_viewer/features/pdf_viewer/page/pdf_viewer_page.dart';
 import 'package:pdf_viewer/shared/model/stored_paths_model.dart';
 import 'package:pdf_viewer/shared/packages/directory/directory_manager.dart';
+import 'package:pdf_viewer/shared/packages/directory/file_model.dart';
 import 'package:pdf_viewer/shared/packages/file/file_picker_adapter.dart';
 import 'package:pdf_viewer/shared/repository/list_repository.dart';
-import 'package:pdf_viewer/shared/utils/assets_handler.dart';
 import 'package:pdf_viewer/shared/utils/date_extension.dart';
+
+import '../widgets/emptt_data_widget.dart';
+import '../widgets/error_data_widget.dart';
 
 class ListPage extends StatefulWidget {
   const ListPage({Key? key}) : super(key: key);
@@ -118,11 +120,14 @@ class _ListPageState extends State<ListPage> {
               return ListTile(
                 title: Text(
                   snapshot.data?[index].name ?? "Caminho não encontrado",
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                subtitle: Text(
-                  "Aberto em ${snapshot.data![index].date.formattedDateTime}",
-                  style: Theme.of(context).textTheme.bodySmall,
+                subtitle: Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    "Aberto em ${snapshot.data![index].date.formattedDateTime}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ),
                 leading: icon,
                 onTap: () async => await onNavigation(
@@ -141,8 +146,8 @@ class _ListPageState extends State<ListPage> {
   }
 
   Widget buildListFilesOwnDevice() {
-    return FutureBuilder<List<String>?>(
-      future: directoryManager.getAllFiles("pdf"),
+    return FutureBuilder<List<FileModel>?>(
+      future: directoryManager.getAllFilesExtended("pdf"),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -154,7 +159,7 @@ class _ListPageState extends State<ListPage> {
           return emptyDataWidget(
               "Não foi possível listar os arquivos", context);
         } else if (snapshot.hasData) {
-          List<String>? paths = snapshot.data;
+          List<FileModel>? paths = snapshot.data;
 
           if (paths == null || paths.isEmpty) {
             return emptyDataWidget(
@@ -169,12 +174,19 @@ class _ListPageState extends State<ListPage> {
             itemBuilder: (context, index) {
               return ListTile(
                 title: Text(
-                  snapshot.data![index].split("/").last,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  snapshot.data![index].name,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                subtitle: Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    "PDF • ${snapshot.data![index].formattedSize} • ${snapshot.data![index].formattedDate}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ),
                 leading: const Icon(Icons.picture_as_pdf),
                 onTap: () async => await onNavigation(
-                  snapshot.data![index],
+                  snapshot.data![index].path,
                   false,
                 ),
               );
@@ -185,54 +197,6 @@ class _ListPageState extends State<ListPage> {
         }
         return errorDataWidget("Falha ao buscar os arquivos", context);
       },
-    );
-  }
-
-  Widget emptyDataWidget(String helperTxt, BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            child: SvgPicture.asset(
-              AssetsPathHandler.emptyData,
-              height: 200,
-            ),
-          ),
-          Text(
-            helperTxt,
-            style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget errorDataWidget(String errorTxt, BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            child: SvgPicture.asset(
-              AssetsPathHandler.error,
-              height: 200,
-            ),
-          ),
-          Text(
-            errorTxt,
-            style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 

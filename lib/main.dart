@@ -77,12 +77,8 @@ class MyApp extends StatelessWidget {
           ),
           headlineSmall: TextStyle(
             color: Colors.black87,
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
-          ),
-          labelSmall: TextStyle(
-            color: Color.fromARGB(255, 197, 197, 197),
-            fontSize: 12,
           ),
         ),
       ),
