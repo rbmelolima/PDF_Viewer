@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pdf_viewer/features/pdf_viewer/page/pdf_viewer_page.dart';
 import 'package:pdf_viewer/shared/model/stored_paths_model.dart';
 import 'package:pdf_viewer/shared/packages/directory/directory_manager.dart';
@@ -155,6 +156,45 @@ class _ListPageState extends State<ListPage> {
           );
         }
 
+        if (snapshot.hasError) {
+          if (snapshot.error is PlatformException) {
+            PlatformException error = snapshot.error as PlatformException;
+
+            if (error.code == "PERMISSION_DENIED") {
+              Future.delayed(const Duration(seconds: 1), () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Permissão negada"),
+                    content: const Text(
+                      "Você precisa conceder permissão para acessar os arquivos do dispositivo",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Fechar"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await directoryManager.redirectToSettings();
+
+                          setState(() {});
+                        },
+                        child: const Text("Ir até as configurações"),
+                      ),
+                    ],
+                  ),
+                );
+              });
+            }
+          }
+          return errorDataWidget(
+            "Falha ao buscar os arquivos, recarregue o aplicativo após dar as permissões necessárias",
+            context,
+          );
+        }
+
         if (snapshot.hasData && snapshot.data!.isEmpty) {
           return emptyDataWidget(
               "Não foi possível listar os arquivos", context);
@@ -192,9 +232,8 @@ class _ListPageState extends State<ListPage> {
               );
             },
           );
-        } else if (snapshot.hasError) {
-          return errorDataWidget("Falha ao buscar os arquivos", context);
         }
+
         return errorDataWidget("Falha ao buscar os arquivos", context);
       },
     );

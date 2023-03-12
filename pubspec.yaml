@@ -17,7 +17,7 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^20.4.49
   file_picker: ^5.2.5
   share_extend: ^2.0.0
-  localstorage: 
+  localstorage: ^4.0.0+1
   flutter_svg: ^2.0.0+1
   printing: ^5.10.1
 

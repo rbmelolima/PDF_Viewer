@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_viewer/features/settings/model/setting_model.dart';
+import 'package:pdf_viewer/shared/packages/directory/directory_manager.dart';
 import 'package:pdf_viewer/shared/repository/list_repository.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -24,6 +25,15 @@ class SettingsPage extends StatelessWidget {
         action: () async {
           ListRepository listRepository = ListRepository();
           await listRepository.clearFiles(TypeFile.favorite);
+        },
+      ),
+      SettingModel(
+        icon: const Icon(Icons.settings),
+        title: 'Abrir configurações',
+        subtitle: 'Permita o acesso à todos os arquivos do seu dispositivo',
+        action: () async {
+          DirectoryManager directoryManager = DirectoryManager();
+          await directoryManager.redirectToSettings();
         },
       ),
     ];

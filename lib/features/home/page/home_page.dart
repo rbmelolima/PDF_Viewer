@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  late ListRepository listRepository;
+  ListRepository listRepository = ListRepository();
 
   static const List<Widget> _widgetOptions = <Widget>[
     ListPage(),
@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    listRepository = ListRepository();
     super.initState();
   }
 
