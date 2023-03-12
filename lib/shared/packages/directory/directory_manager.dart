@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 
@@ -10,53 +10,49 @@ class DirectoryManager {
 
   /// Busca todas as pastas raiz da memória interna do dispositivo
   Future<List<String>?> getRootPaths() async {
-    try {
-      final List<dynamic> path = await _plataform.invokeMethod('getRootPaths');
+    if (Platform.isIOS) throw UnimplementedError();
 
-      return path.map((e) => e.toString()).toList();
-    } catch (e) {
-      log("Falha no methodChannel: $_methodChannelName", error: e);
-      return null;
-    }
+    final List<dynamic> path = await _plataform.invokeMethod('getRootPaths');
+    return path.map((e) => e.toString()).toList();
   }
 
   /// Busca todos os arquivos de um determinado tipo no armazenamento interno/externo do dispositivo
-  Future<List<String>?> getAllFiles(String typeFile) async {
-    try {
-      final List<dynamic> path = await _plataform.invokeMethod(
-        'getAllFiles',
-        typeFile.toLowerCase(),
-      );
+  Future<List<String>> getAllFiles(String typeFile) async {
+    if (Platform.isIOS) throw UnimplementedError();
 
-      return path.map((e) => e.toString()).toList();
-    } catch (e) {
-      log("Falha no methodChannel: $_methodChannelName", error: e);
-      return null;
-    }
+    final List<dynamic> path = await _plataform.invokeMethod(
+      'getAllFiles',
+      typeFile.toLowerCase(),
+    );
+
+    return path.map((e) => e.toString()).toList();
   }
 
-  Future<List<FileModel>?> getAllFilesExtended(
+  Future<List<FileModel>> getAllFilesExtended(
     String typeFile,
   ) async {
-    try {
-      final List<dynamic> path = await _plataform.invokeMethod(
-        'getAllFilesExtended',
-        typeFile.toLowerCase(),
-      );
+    if (Platform.isIOS) throw UnimplementedError();
 
-      var list = path.map(
-        (e) => FileModel(
-          name: e['name']!,
-          path: e['path']!,
-          lastModified: e['lastModified']!,
-          size: e['size']!,
-        ),
-      );
+    final List<dynamic> path = await _plataform.invokeMethod(
+      'getAllFilesExtended',
+      typeFile.toLowerCase(),
+    );
 
-      return list.toList();
-    } catch (e) {
-      log("Falha no methodChannel: $_methodChannelName", error: e);
-      return null;
-    }
+    var list = path.map(
+      (e) => FileModel(
+        name: e['name']!,
+        path: e['path']!,
+        lastModified: e['lastModified']!,
+        size: e['size']!,
+      ),
+    );
+
+    return list.toList();
+  }
+
+  Future<void> redirectToSettings() async {
+    if (Platform.isIOS) throw UnimplementedError();
+
+    await _plataform.invokeMethod('redirectToSettings');
   }
 }
