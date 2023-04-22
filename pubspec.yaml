@@ -30,21 +30,21 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/logo/logo.png"
+  image_path: "assets/images/logo/logo.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
 
 flutter:
   uses-material-design: true
 
   assets:
-    - assets/
-    - assets/logo/
+    - assets/images
+    - assets/images/logo/
 
   fonts:
     - family: Lato
       fonts:
-        - asset: fonts/Lato/Lato-Black.ttf
-        - asset: fonts/Lato/Lato-Bold.ttf
-        - asset: fonts/Lato/Lato-Light.ttf
-        - asset: fonts/Lato/Lato-Regular.ttf
-        - asset: fonts/Lato/Lato-Thin.ttf
+        - asset: assets/fonts/Lato/Lato-Black.ttf
+        - asset: assets/fonts/Lato/Lato-Bold.ttf
+        - asset: assets/fonts/Lato/Lato-Light.ttf
+        - asset: assets/fonts/Lato/Lato-Regular.ttf
+        - asset: assets/fonts/Lato/Lato-Thin.ttf
